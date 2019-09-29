@@ -1,52 +1,55 @@
 import scipy.io
+from unittest import TestCase, main
 from sklearn import svm
-from sklearn import cross_validation
+from sklearn.model_selection import KFold
 from sklearn.metrics import accuracy_score
 from skfeature.function.sparse_learning_based import RFS
 from skfeature.utility.sparse_learning import construct_label_matrix, feature_ranking
 
 
-def main():
-    # load data
-    mat = scipy.io.loadmat('../data/COIL20.mat')
-    X = mat['X']    # data
-    X = X.astype(float)
-    y = mat['Y']    # label
-    y = y[:, 0]
-    Y = construct_label_matrix(y)
-    n_samples, n_features = X.shape
+class TestRFS(TestCase):
 
-    # split data into 10 folds
-    ss = cross_validation.KFold(n_samples, n_folds=10, shuffle=True)
+    def test_rfs(self):
+        # load data
+        mat = scipy.io.loadmat('../data/COIL20.mat')
+        X = mat['X']  # data
+        X = X.astype(float)
+        y = mat['Y']  # label
+        y = y[:, 0]
+        Y = construct_label_matrix(y)
+        n_samples, n_features = X.shape
 
-    # perform evaluation on classification task
-    num_fea = 100    # number of selected features
-    clf = svm.LinearSVC()    # linear SVM
+        # split data into 10 folds
+        kf = KFold(n_splits=10, shuffle=True)
 
-    correct = 0
-    for train, test in ss:
-        # obtain the feature weight matrix
-        Weight = RFS.rfs(X[train, :], Y[train, :], gamma=0.1)
+        # perform evaluation on classification task
+        num_fea = 100  # number of selected features
+        clf = svm.LinearSVC()  # linear SVM
 
-        # sort the feature scores in an ascending order according to the feature scores
-        idx = feature_ranking(Weight)
+        correct = 0
+        for train, test in kf.split(X):
+            # obtain the feature weight matrix
+            Weight = RFS.rfs(X[train, :], Y[train, :], gamma=0.1)
 
-        # obtain the dataset on the selected features
-        selected_features = X[:, idx[0:num_fea]]
+            # sort the feature scores in an ascending order according to the feature scores
+            idx = feature_ranking(Weight)
 
-        # train a classification model with the selected features on the training dataset
-        clf.fit(selected_features[train], y[train])
+            # obtain the dataset on the selected features
+            selected_features = X[:, idx[0:num_fea]]
 
-        # predict the class labels of test data
-        y_predict = clf.predict(selected_features[test])
+            # train a classification model with the selected features on the training dataset
+            clf.fit(selected_features[train], y[train])
 
-        # obtain the classification accuracy on the test data
-        acc = accuracy_score(y[test], y_predict)
-        print acc
-        correct = correct + acc
+            # predict the class labels of test data
+            y_predict = clf.predict(selected_features[test])
 
-    # output the average classification accuracy over all 10 folds
-    print 'Accuracy:', float(correct)/10
+            # obtain the classification accuracy on the test data
+            acc = accuracy_score(y[test], y_predict)
+            correct = correct + acc
+
+        # output the average classification accuracy over all 10 folds
+        print('Accuracy:', float(correct) / 10)
+
 
 if __name__ == '__main__':
     main()

@@ -15,6 +15,8 @@ def fcbf(X, y, **kwargs):
     kwargs: {dictionary}
         delta: {float}
             delta is a threshold parameter, the default value of delta is 0
+        n_selected_features: {int}
+            the maximum number of selected features returned, the default is the number of input features
 
     Output
     ------
@@ -34,9 +36,10 @@ def fcbf(X, y, **kwargs):
     else:
         # the default value of delta is 0
         delta = 0
+    n_selected_features = kwargs.get('n_selected_features', n_features)
 
     # t1[:,0] stores index of features, t1[:,1] stores symmetrical uncertainty of features
-    t1 = np.zeros((n_features, 2), dtypes='object')
+    t1 = np.zeros((n_features, 2), dtype='object')
     for i in range(n_features):
         f = X[:, i]
         t1[i, 0] = i
@@ -46,7 +49,7 @@ def fcbf(X, y, **kwargs):
     F = []
     # Symmetrical uncertainty of selected features
     SU = []
-    while len(s_list) != 0:
+    while len(s_list) != 0 and len(F) < n_selected_features:
         # select the largest su inside s_list
         idx = np.argmax(s_list[:, 1])
         # record the index of the feature with the largest su
@@ -65,4 +68,4 @@ def fcbf(X, y, **kwargs):
                 s_list = s_list[idx]
                 length = len(s_list)//2
                 s_list = s_list.reshape((length, 2))
-    return np.array(F, dtype=int), np.array(SU)
+    return np.array(F, dtype=int)

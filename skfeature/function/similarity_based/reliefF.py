@@ -16,6 +16,8 @@ def reliefF(X, y, **kwargs):
         parameters of reliefF:
         k: {int}
             choices for the number of neighbors (default k = 5)
+        n_selected_features: {int}
+            the maximum number of selected features returned, the default is the number of input features
 
     Output
     ------
@@ -33,6 +35,8 @@ def reliefF(X, y, **kwargs):
     else:
         k = kwargs["k"]
     n_samples, n_features = X.shape
+
+    n_selected_features = kwargs.get('n_selected_features', n_features)
 
     # calculate pairwise distances between instances
     distance = pairwise_distances(X, metric='manhattan')
@@ -100,16 +104,17 @@ def reliefF(X, y, **kwargs):
                 near_miss_term[label] = np.array(abs(self_fea-X[ele, :]))+np.array(near_miss_term[label])
             score += near_miss_term[label]/(k*p_dict[label])
         score -= near_hit_term/k
-    return score
+
+    return feature_ranking(score, n_selected_features)
 
 
-def feature_ranking(score):
+def feature_ranking(score, n_selected_features):
     """
     Rank features in descending order according to reliefF score, the higher the reliefF score, the more important the
     feature is
     """
     idx = np.argsort(score, 0)
-    return idx[::-1]
+    return idx[::-1][:n_selected_features]
 
 
 
