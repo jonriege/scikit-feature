@@ -4,10 +4,13 @@ from sklearn.model_selection import KFold
 from skfeature.function.wrapper import svm_backward
 from sklearn import svm
 from sklearn.metrics import accuracy_score
+from sklearn.utils.testing import ignore_warnings
+from sklearn.exceptions import ConvergenceWarning
 
 
 class TestSVMBackward(TestCase):
 
+    @ignore_warnings(category=ConvergenceWarning)
     def test_svm_backward(self):
         # load data
         mat = scipy.io.loadmat('../data/COIL20.mat')
@@ -26,7 +29,7 @@ class TestSVMBackward(TestCase):
         correct = 0
         for train, test in kf.split(X):
             # obtain the idx of selected features from the training set
-            idx = svm_backward.svm_backward(X[train], y[train], n_features)
+            idx = svm_backward.svm_backward(X[train], y[train], n_selected_features=n_features)
 
             # obtain the dataset on the selected features
             X_selected = X[:, idx]

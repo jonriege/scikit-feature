@@ -3,6 +3,7 @@ import numpy as np
 from numpy import linalg as LA
 from skfeature.utility.sparse_learning import generate_diagonal_matrix
 from skfeature.utility.sparse_learning import calculate_l21_norm
+from skfeature.utility.sparse_learning import feature_ranking
 
 
 def rfs(X, Y, **kwargs):
@@ -19,6 +20,8 @@ def rfs(X, Y, **kwargs):
     kwargs: {dictionary}
         gamma: {float}
             parameter in RFS
+        n_selected_features: {int}
+            the maximum number of selected features returned, the default is the number of input features
         verbose: boolean
             True if want to display the objective function value, false if not
 
@@ -33,16 +36,13 @@ def rfs(X, Y, **kwargs):
     """
 
     # default gamma is 1
-    if 'gamma' not in kwargs:
-        gamma = 1
-    else:
-        gamma = kwargs['gamma']
-    if 'verbose' not in kwargs:
-        verbose = False
-    else:
-        verbose = kwargs['verbose']
+    gamma = kwargs.get('gamma', 0.1)
+    verbose = kwargs.get('verbose', False)
 
     n_samples, n_features = X.shape
+
+    n_selected_features = kwargs.get('n_selected_features', n_features)
+
     A = np.zeros((n_samples, n_samples + n_features))
     A[:, 0:n_features] = X
     A[:, n_features:n_features+n_samples] = gamma*np.eye(n_samples)
@@ -67,7 +67,7 @@ def rfs(X, Y, **kwargs):
 
     # the first d rows of U are the feature weights
     W = U[0:n_features, :]
-    return W
+    return feature_ranking(W)[:n_selected_features]
 
 
 def calculate_obj(X, Y, W, gamma):

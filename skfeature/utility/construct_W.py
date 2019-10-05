@@ -1,8 +1,10 @@
 import numpy as np
 from scipy.sparse import *
 from sklearn.metrics.pairwise import pairwise_distances
+from sklearn.utils.testing import ignore_warnings
 
 
+@ignore_warnings(category=PendingDeprecationWarning)
 def construct_W(X, **kwargs):
     """
     Construct the affinity matrix W through different ways

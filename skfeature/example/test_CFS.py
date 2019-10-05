@@ -20,16 +20,15 @@ class TestCFS(TestCase):
         kf = KFold(n_splits=10, shuffle=True)
 
         # perform evaluation on classification task
-        num_fea = 100  # number of selected features
         clf = svm.LinearSVC()  # linear SVM
 
         correct = 0
         for train, test in kf.split(X):
             # obtain the index of selected features on training set
-            idx = CFS.cfs(X[train], y[train])
+            idx = CFS.cfs(X[train], y[train], n_selected_features=100)
 
             # obtain the dataset on the selected features
-            selected_features = X[:, idx[0:num_fea]]
+            selected_features = X[:, idx]
 
             # train a classification model with the selected features on the training dataset
             clf.fit(selected_features[train], y[train])

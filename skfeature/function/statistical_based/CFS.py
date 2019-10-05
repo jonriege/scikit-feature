@@ -37,7 +37,7 @@ def merit_calculation(X, y):
     return merits
 
 
-def cfs(X, y):
+def cfs(X, y, **kwargs):
     """
     This function uses a correlation based heuristic to evaluate the worth of features which is called CFS
 
@@ -47,6 +47,9 @@ def cfs(X, y):
         input data
     y: {numpy array}, shape (n_samples,)
         input class labels
+    kwargs: {dictionary}
+        n_selected_features: {int}
+            the maximum number of selected features returned (default: n_features)
 
     Output
     ------
@@ -59,11 +62,12 @@ def cfs(X, y):
     """
 
     n_samples, n_features = X.shape
+    n_selected_features = kwargs.get('n_selected_features', n_features)
     F = []
     # M stores the merit values
     M = []
-    while True:
-        merit = -100000000000
+    while len(F) < n_selected_features:
+        merit = -np.inf
         idx = -1
         for i in range(n_features):
             if i not in F:
@@ -77,10 +81,7 @@ def cfs(X, y):
         F.append(idx)
         M.append(merit)
         if len(M) > 5:
-            if M[len(M)-1] <= M[len(M)-2]:
-                if M[len(M)-2] <= M[len(M)-3]:
-                    if M[len(M)-3] <= M[len(M)-4]:
-                        if M[len(M)-4] <= M[len(M)-5]:
-                            break
+            if all(M[i] <= M[i-1] for i in range(-1, -5, -1)):
+                break
     return np.array(F)
 

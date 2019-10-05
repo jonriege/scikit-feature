@@ -4,10 +4,13 @@ from sklearn.model_selection import KFold
 from sklearn import svm
 from sklearn.metrics import accuracy_score
 from skfeature.function.similarity_based import fisher_score
+from sklearn.utils.testing import ignore_warnings
+from sklearn.exceptions import ConvergenceWarning
 
 
 class TestFisherScore(TestCase):
 
+    @ignore_warnings(category=ConvergenceWarning)
     def test_fisher_score(self):
         # load data
         mat = scipy.io.loadmat('../data/COIL20.mat')
@@ -20,19 +23,15 @@ class TestFisherScore(TestCase):
         kf = KFold(n_splits=10, shuffle=True)
 
         # perform evaluation on classification task
-        num_fea = 100  # number of selected features
         clf = svm.LinearSVC()  # linear SVM
 
         correct = 0
         for train, test in kf.split(X):
             # obtain the score of each feature on the training set
-            score = fisher_score.fisher_score(X[train], y[train])
-
-            # rank features in descending order according to score
-            idx = fisher_score.feature_ranking(score)
+            idx = fisher_score.fisher_score(X[train], y[train], n_selected_features=100)
 
             # obtain the dataset on the selected features
-            selected_features = X[:, idx[0:num_fea]]
+            selected_features = X[:, idx]
 
             # train a classification model with the selected features on the training dataset
             clf.fit(selected_features[train], y[train])

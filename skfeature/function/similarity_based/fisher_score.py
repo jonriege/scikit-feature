@@ -1,9 +1,13 @@
 import numpy as np
 from scipy.sparse import *
 from skfeature.utility.construct_W import construct_W
+from sklearn.utils.testing import ignore_warnings
+from sklearn.exceptions import ConvergenceWarning
 
 
-def fisher_score(X, y):
+@ignore_warnings(category=ConvergenceWarning)
+@ignore_warnings(category=PendingDeprecationWarning)
+def fisher_score(X, y, **kwargs):
     """
     This function implements the fisher score feature selection, steps are as follows:
     1. Construct the affinity matrix W in fisher score way
@@ -17,6 +21,9 @@ def fisher_score(X, y):
         input data
     y: {numpy array}, shape (n_samples,)
         input class labels
+    kwargs: {dictionary}
+        n_selected_features: {int}
+            the maximum number of selected features returned, the default is the number of input features
 
     Output
     ------
@@ -29,9 +36,11 @@ def fisher_score(X, y):
     Duda, Richard et al. "Pattern classification." John Wiley & Sons, 2012.
     """
 
+    n_samples, n_features = X.shape
+    n_selected_features = kwargs.get('n_selected_features', n_features)
+
     # Construct weight matrix W in a fisherScore way
-    kwargs = {"neighbor_mode": "supervised", "fisher_score": True, 'y': y}
-    W = construct_W(X, **kwargs)
+    W = construct_W(X, neighbor_mode='supervised', fisher_score=True, y=y)
 
     # build the diagonal D matrix from affinity matrix W
     D = np.array(W.sum(axis=1))
@@ -50,14 +59,14 @@ def fisher_score(X, y):
     lap_score = 1 - np.array(np.multiply(L_prime, 1/D_prime))[0, :]
 
     # compute fisher score from laplacian score, where fisher_score = 1/lap_score - 1
-    score = 1.0/lap_score - 1
-    return np.transpose(score)
+    score = np.transpose(1.0/lap_score - 1)
+    return feature_ranking(score, n_selected_features)
 
 
-def feature_ranking(score):
+def feature_ranking(score, n_selected_features):
     """
     Rank features in descending order according to fisher score, the larger the fisher score, the more important the
     feature is
     """
     idx = np.argsort(score, 0)
-    return idx[::-1]
+    return idx[::-1][:n_selected_features]

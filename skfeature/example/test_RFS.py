@@ -17,25 +17,20 @@ class TestRFS(TestCase):
         y = mat['Y']  # label
         y = y[:, 0]
         Y = construct_label_matrix(y)
-        n_samples, n_features = X.shape
 
         # split data into 10 folds
         kf = KFold(n_splits=10, shuffle=True)
 
         # perform evaluation on classification task
-        num_fea = 100  # number of selected features
         clf = svm.LinearSVC()  # linear SVM
 
         correct = 0
         for train, test in kf.split(X):
             # obtain the feature weight matrix
-            Weight = RFS.rfs(X[train, :], Y[train, :], gamma=0.1)
-
-            # sort the feature scores in an ascending order according to the feature scores
-            idx = feature_ranking(Weight)
+            idx = RFS.rfs(X[train, :], Y[train, :], gamma=0.1, n_selected_features=100)
 
             # obtain the dataset on the selected features
-            selected_features = X[:, idx[0:num_fea]]
+            selected_features = X[:, idx]
 
             # train a classification model with the selected features on the training dataset
             clf.fit(selected_features[train], y[train])

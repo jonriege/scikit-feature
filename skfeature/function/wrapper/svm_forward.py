@@ -1,8 +1,11 @@
 import numpy as np
 from sklearn.svm import LinearSVC
 from sklearn.model_selection import cross_val_score
+from sklearn.utils.testing import ignore_warnings
+from sklearn.exceptions import ConvergenceWarning
 
 
+@ignore_warnings(category=ConvergenceWarning)
 def svm_forward(X, y, **kwargs):
     """
     This function implements the forward feature selection algorithm based on SVM
@@ -15,7 +18,7 @@ def svm_forward(X, y, **kwargs):
         input class labels
     kwargs: {dictionary}
         cv: {int}
-            the number of folds when calculating accuracy through cross validation (default: 5)
+            the number of folds when calculating accuracy through cross validation (default: 3)
         n_selected_features: {int}
             the maximum number of selected features returned (default: n_features)
 
@@ -38,6 +41,7 @@ def svm_forward(X, y, **kwargs):
     count = 0
     while count < n_selected_features:
         max_acc = 0
+        idx = None
         for i in range(n_features):
             if i not in F:
                 F.append(i)

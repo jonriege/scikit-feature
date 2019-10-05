@@ -30,10 +30,8 @@ def reliefF(X, y, **kwargs):
     Zhao, Zheng et al. "On Similarity Preserving Feature Selection." TKDE 2013.
     """
 
-    if "k" not in kwargs.keys():
-        k = 5
-    else:
-        k = kwargs["k"]
+    k = kwargs.get('k', 5)
+
     n_samples, n_features = X.shape
 
     n_selected_features = kwargs.get('n_selected_features', n_features)
