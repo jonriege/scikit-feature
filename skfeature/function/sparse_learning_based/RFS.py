@@ -1,12 +1,11 @@
 import math
 import numpy as np
 from numpy import linalg as LA
-from skfeature.utility.sparse_learning import generate_diagonal_matrix
-from skfeature.utility.sparse_learning import calculate_l21_norm
-from skfeature.utility.sparse_learning import feature_ranking
+from skfeature.utility.sparse_learning import generate_diagonal_matrix, calculate_l21_norm, feature_ranking, \
+    construct_label_matrix
 
 
-def rfs(X, Y, **kwargs):
+def rfs(X, y, **kwargs):
     """
     This function implementS efficient and robust feature selection via joint l21-norms minimization
     min_W||X^T W - Y||_2,1 + gamma||W||_2,1
@@ -15,8 +14,8 @@ def rfs(X, Y, **kwargs):
     -----
     X: {numpy array}, shape (n_samples, n_features)
         input data
-    Y: {numpy array}, shape (n_samples, n_classes)
-        input class label matrix, each row is a one-hot-coding class label
+    y: {numpy array}, shape (n_samples,)
+        input class labels
     kwargs: {dictionary}
         gamma: {float}
             parameter in RFS
@@ -35,6 +34,8 @@ def rfs(X, Y, **kwargs):
     Nie, Feiping et al. "Efficient and Robust Feature Selection via Joint l2,1-Norms Minimization" NIPS 2010.
     """
 
+
+
     # default gamma is 1
     gamma = kwargs.get('gamma', 0.1)
     verbose = kwargs.get('verbose', False)
@@ -43,6 +44,7 @@ def rfs(X, Y, **kwargs):
 
     n_selected_features = kwargs.get('n_selected_features', n_features)
 
+    Y = construct_label_matrix(y)
     A = np.zeros((n_samples, n_samples + n_features))
     A[:, 0:n_features] = X
     A[:, n_features:n_features+n_samples] = gamma*np.eye(n_samples)

@@ -10,13 +10,13 @@ from skfeature.utility.sparse_learning import construct_label_matrix, feature_ra
 class TestRFS(TestCase):
 
     def test_rfs(self):
+
         # load data
         mat = scipy.io.loadmat('../data/COIL20.mat')
-        X = mat['X']  # data
+        X = mat['X'][50:100]
         X = X.astype(float)
-        y = mat['Y']  # label
+        y = mat['Y'][50:100]
         y = y[:, 0]
-        Y = construct_label_matrix(y)
 
         # split data into 10 folds
         kf = KFold(n_splits=10, shuffle=True)
@@ -27,7 +27,7 @@ class TestRFS(TestCase):
         correct = 0
         for train, test in kf.split(X):
             # obtain the feature weight matrix
-            idx = RFS.rfs(X[train, :], Y[train, :], gamma=0.1, n_selected_features=100)
+            idx = RFS.rfs(X[train], y[train], gamma=0.1, n_selected_features=100)
 
             # obtain the dataset on the selected features
             selected_features = X[:, idx]
