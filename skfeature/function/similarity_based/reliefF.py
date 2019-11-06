@@ -1,121 +1,121 @@
 import numpy as np
 from sklearn.metrics.pairwise import pairwise_distances
+from sklearn.preprocessing import normalize
 
 
-def reliefF(X, y, **kwargs):
-    """
-    This function implements the reliefF feature selection
+class ReliefF:
 
-    Input
-    -----
-    X: {numpy array}, shape (n_samples, n_features)
-        input data
-    y: {numpy array}, shape (n_samples,)
-        input class labels
-    kwargs: {dictionary}
-        parameters of reliefF:
-        k: {int}
-            choices for the number of neighbors (default k = 5)
-        n_selected_features: {int}
-            the maximum number of selected features returned, the default is the number of input features
+    def __init__(self, k=5):
+        self.scores = None
+        self.k = k
 
-    Output
-    ------
-    score: {numpy array}, shape (n_features,)
-        reliefF score for each feature
+    def fit_transform(self, X, y, n_features=None, threshold=0):
+        self.fit(X, y)
+        return self.transform(X, n_features, threshold)
 
-    Reference
-    ---------
-    Robnik-Sikonja, Marko et al. "Theoretical and empirical analysis of relieff and rrelieff." Machine Learning 2003.
-    Zhao, Zheng et al. "On Similarity Preserving Feature Selection." TKDE 2013.
-    """
+    def transform(self, X, n_features=None, threshold=0):
+        """
+        Rank features in descending order according to reliefF score, the higher the reliefF score, the more important the
+        feature is
+        """
 
-    k = kwargs.get('k', 5)
+        sorted_indices_rev = np.argsort(self.scores)
+        sorted_indices = np.flip(sorted_indices_rev)
+        filtered_indices = [i for i in sorted_indices if self.scores[i] > threshold]
+        if n_features is not None:
+            filtered_indices = filtered_indices[:n_features]
+        return X[:, filtered_indices]
 
-    n_samples, n_features = X.shape
+    def fit(self, X, y):
+        """
+        This function implements the reliefF feature selection
 
-    n_selected_features = kwargs.get('n_selected_features', n_features)
+        Input
+        -----
+        X: {numpy array}, shape (n_samples, n_features)
+            input data
+        y: {numpy array}, shape (n_samples,)
+            input class labels
 
-    # calculate pairwise distances between instances
-    distance = pairwise_distances(X, metric='manhattan')
+        Output
+        ------
+        score: {numpy array}, shape (n_features,)
+            reliefF score for each feature
 
-    score = np.zeros(n_features)
+        Reference
+        ---------
+        Robnik-Sikonja, Marko et al. "Theoretical and empirical analysis of relieff and rrelieff." Machine Learning 2003.
+        Zhao, Zheng et al. "On Similarity Preserving Feature Selection." TKDE 2013.
+        """
 
-    # the number of sampled instances is equal to the number of total instances
-    for idx in range(n_samples):
-        near_hit = []
-        near_miss = dict()
+        n_samples, n_features = X.shape
 
-        self_fea = X[idx, :]
-        c = np.unique(y).tolist()
+        # calculate pairwise distances between instances
+        distance = pairwise_distances(X, metric='manhattan')
 
-        stop_dict = dict()
-        for label in c:
-            stop_dict[label] = 0
-        del c[c.index(y[idx])]
+        scores = np.zeros(n_features)
 
-        p_dict = dict()
-        p_label_idx = float(len(y[y == y[idx]]))/float(n_samples)
+        # the number of sampled instances is equal to the number of total instances
+        for idx in range(n_samples):
+            near_hit = []
+            near_miss = dict()
 
-        for label in c:
-            p_label_c = float(len(y[y == label]))/float(n_samples)
-            p_dict[label] = p_label_c/(1-p_label_idx)
-            near_miss[label] = []
+            self_fea = X[idx, :]
+            c = np.unique(y).tolist()
 
-        distance_sort = []
-        distance[idx, idx] = np.max(distance[idx, :])
+            stop_dict = dict()
+            for label in c:
+                stop_dict[label] = 0
+            del c[c.index(y[idx])]
 
-        for i in range(n_samples):
-            distance_sort.append([distance[idx, i], int(i), y[i]])
-        distance_sort.sort(key=lambda x: x[0])
+            p_dict = dict()
+            p_label_idx = float(len(y[y == y[idx]])) / float(n_samples)
 
-        for i in range(n_samples):
-            # find k nearest hit points
-            if distance_sort[i][2] == y[idx]:
-                if len(near_hit) < k:
-                    near_hit.append(distance_sort[i][1])
-                elif len(near_hit) == k:
-                    stop_dict[y[idx]] = 1
-            else:
-                # find k nearest miss points for each label
-                if len(near_miss[distance_sort[i][2]]) < k:
-                    near_miss[distance_sort[i][2]].append(distance_sort[i][1])
+            for label in c:
+                p_label_c = float(len(y[y == label])) / float(n_samples)
+                p_dict[label] = p_label_c / (1 - p_label_idx)
+                near_miss[label] = []
+
+            distance_sort = []
+            distance[idx, idx] = np.max(distance[idx, :])
+
+            for i in range(n_samples):
+                distance_sort.append([distance[idx, i], int(i), y[i]])
+            distance_sort.sort(key=lambda x: x[0])
+
+            for i in range(n_samples):
+                # find k nearest hit points
+                if distance_sort[i][2] == y[idx]:
+                    if len(near_hit) < self.k:
+                        near_hit.append(distance_sort[i][1])
+                    elif len(near_hit) == self.k:
+                        stop_dict[y[idx]] = 1
                 else:
-                    if len(near_miss[distance_sort[i][2]]) == k:
-                        stop_dict[distance_sort[i][2]] = 1
-            stop = True
-            for (key, value) in stop_dict.items():
+                    # find k nearest miss points for each label
+                    if len(near_miss[distance_sort[i][2]]) < self.k:
+                        near_miss[distance_sort[i][2]].append(distance_sort[i][1])
+                    else:
+                        if len(near_miss[distance_sort[i][2]]) == self.k:
+                            stop_dict[distance_sort[i][2]] = 1
+                stop = True
+                for (key, value) in stop_dict.items():
                     if value != 1:
                         stop = False
-            if stop:
-                break
+                if stop:
+                    break
 
-        # update reliefF score
-        near_hit_term = np.zeros(n_features)
-        for ele in near_hit:
-            near_hit_term = np.array(abs(self_fea-X[ele, :]))+np.array(near_hit_term)
+            # update reliefF score
+            near_hit_term = np.zeros(n_features)
+            for ele in near_hit:
+                near_hit_term = np.array(abs(self_fea - X[ele, :])) + np.array(near_hit_term)
 
-        near_miss_term = dict()
-        for (label, miss_list) in near_miss.items():
-            near_miss_term[label] = np.zeros(n_features)
-            for ele in miss_list:
-                near_miss_term[label] = np.array(abs(self_fea-X[ele, :]))+np.array(near_miss_term[label])
-            score += near_miss_term[label]/(k*p_dict[label])
-        score -= near_hit_term/k
+            near_miss_term = dict()
+            for (label, miss_list) in near_miss.items():
+                near_miss_term[label] = np.zeros(n_features)
+                for ele in miss_list:
+                    near_miss_term[label] = np.array(abs(self_fea - X[ele, :])) + np.array(near_miss_term[label])
+                scores += near_miss_term[label] / (self.k * p_dict[label])
+            scores -= near_hit_term / self.k
 
-    return feature_ranking(score, n_selected_features)
-
-
-def feature_ranking(score, n_selected_features):
-    """
-    Rank features in descending order according to reliefF score, the higher the reliefF score, the more important the
-    feature is
-    """
-    idx = np.argsort(score, 0)
-    return idx[::-1][:n_selected_features]
-
-
-
-
-
-
+        normalized_scores = normalize([scores], norm='l1')[0]
+        self.scores = normalized_scores
