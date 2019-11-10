@@ -5,17 +5,15 @@ from sklearn.preprocessing import normalize
 
 class ForwardSelection:
 
-    def __init__(self, estimator, n_features=None, threshold=0):
+    def __init__(self, estimator):
         self.estimator = estimator
-        self.n_features = n_features
-        self.threshold = threshold
         self.scores = None
 
-    def fit_transform(self, X, y, n_features=None, threshold=0):
-        self.fit(X, y)
+    def fit_transform(self, X, y, n_features=None, threshold=0.0):
+        self.fit(X, y, n_features, threshold)
         return self.transform(X, n_features, threshold)
 
-    def transform(self, X, n_features=None, threshold=0):
+    def transform(self, X, n_features=None, threshold=0.0):
         sorted_indices_rev = np.argsort(self.scores)
         sorted_indices = np.flip(sorted_indices_rev)
         filtered_indices = [i for i in sorted_indices if self.scores[i] > threshold]
@@ -23,11 +21,11 @@ class ForwardSelection:
             filtered_indices = filtered_indices[:n_features]
         return X[:, filtered_indices]
 
-    def fit(self, X, y):
+    def fit(self, X, y, n_features=None, threshold=0.0):
         x_features = X.shape[1]
         scores = np.zeros(x_features, dtype=float)
         n = 1
-        n_features = self.n_features if self.n_features else x_features
+        n_features = n_features if n_features else x_features
         curr_score = 0.0
         selected_features = []
         while n <= n_features:
@@ -46,7 +44,7 @@ class ForwardSelection:
                     feature = f
 
             score_change = curr_score - last_score
-            if score_change <= self.threshold:
+            if score_change <= threshold:
                 break
 
             selected_features.append(feature)

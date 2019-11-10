@@ -8,11 +8,11 @@ class ChiSquare:
     def __init__(self):
         self.scores = None
 
-    def fit_transform(self, X, y, n_features=None, threshold=0):
+    def fit_transform(self, X, y, n_features=None, threshold=0.0):
         self.fit(X, y)
         return self.transform(X, n_features, threshold)
 
-    def transform(self, X, n_features=None, threshold=0):
+    def transform(self, X, n_features=None, threshold=0.0):
         """
         Rank features in descending order according to chi2-score, the higher the chi2-score, the more
         important the feature is
