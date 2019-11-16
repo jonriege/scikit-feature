@@ -69,7 +69,8 @@ def rfs(X, y, **kwargs):
 
     # the first d rows of U are the feature weights
     W = U[0:n_features, :]
-    return feature_ranking(W)[:n_selected_features]
+    scores = (W*W).sum(1)
+    return scores
 
 
 def calculate_obj(X, Y, W, gamma):

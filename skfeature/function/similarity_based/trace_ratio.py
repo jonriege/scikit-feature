@@ -2,7 +2,7 @@ import numpy as np
 from skfeature.utility.construct_W import construct_W
 
 
-def trace_ratio(X, y, n_selected_features, **kwargs):
+def trace_ratio(X, y, **kwargs):
     """
     This function implements the trace ratio criterion for feature selection
 
@@ -12,9 +12,9 @@ def trace_ratio(X, y, n_selected_features, **kwargs):
         input data
     y: {numpy array}, shape (n_samples,)
         input class labels
-    n_selected_features: {int}
-        number of features to select
     kwargs: {dictionary}
+        n_selected_features: {int}
+            number of features to select
         style: {string}
             style == 'fisher', build between-class matrix and within-class affinity matrix in a fisher score way
             style == 'laplacian', build between-class matrix and within-class affinity matrix in a laplacian score way
@@ -41,6 +41,8 @@ def trace_ratio(X, y, n_selected_features, **kwargs):
     # get the way to build affinity matrix, 'fisher' or 'laplacian'
     style = kwargs['style']
     n_samples, n_features = X.shape
+
+    n_selected_features = kwargs.get('n_selected_features', int(0.5 * n_features))
 
     # if 'verbose' is not specified, do not output the value of objective function
     if 'verbose' not in kwargs:
@@ -104,9 +106,11 @@ def trace_ratio(X, y, n_selected_features, **kwargs):
     # get feature index, feature-level score and subset-level score
     feature_idx = fs_idx[I]
     feature_score = score
-    subset_score = k
+    scores = np.zeros(n_features, dtype=float)
+    for i, v in zip(feature_idx, feature_score):
+        scores[i] = v
 
-    return feature_idx, feature_score, subset_score
+    return scores
 
 
 

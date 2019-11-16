@@ -1,10 +1,12 @@
 import math
 import numpy as np
 from numpy import linalg as LA
+from sklearn.preprocessing import OneHotEncoder
 from skfeature.utility.sparse_learning import euclidean_projection, calculate_l21_norm
 
 
-def proximal_gradient_descent(X, Y, z, **kwargs):
+
+def proximal_gradient_descent(X, y, **kwargs):
     """
     This function implements supervised sparse feature selection via l2,1 norm, i.e.,
     min_{W} sum_{i}log(1+exp(-yi*(W'*x+C))) + z*||W||_{2,1}
@@ -13,13 +15,13 @@ def proximal_gradient_descent(X, Y, z, **kwargs):
     -----
     X: {numpy array}, shape (n_samples, n_features)
         input data
-    Y: {numpy array}, shape (n_samples, n_classes)
-        input class labels, each row is a one-hot-coding class label, guaranteed to be a numpy array
-    z: {float}
-        regularization parameter
+    y: {numpy array}, shape (n_samples, )
+        input class labels
     kwargs: {dictionary}
-        verbose: {boolean}
-            True if user want to print out the objective function value in each iteration, false if not
+            z: {float}
+                regularization parameter
+            verbose: {boolean}
+                True if user want to print out the objective function value in each iteration, false if not
 
     Output
     ------
@@ -39,6 +41,10 @@ def proximal_gradient_descent(X, Y, z, **kwargs):
         verbose = False
     else:
         verbose = kwargs['verbose']
+
+    z = kwargs.get('z', 0.1)
+
+    Y = OneHotEncoder(sparse=False).fit_transform(y.reshape(-1, 1))
 
     # Starting point initialization #
     n_samples, n_features = X.shape
@@ -154,4 +160,5 @@ def proximal_gradient_descent(X, Y, z, **kwargs):
         # determine weather converge
         if iter_step >= 1 and math.fabs(obj[iter_step] - obj[iter_step-1]) < 1e-3:
             break
-    return W, obj, value_gamma
+    scores = (W * W).sum(1)
+    return scores

@@ -5,9 +5,7 @@ from sklearn.utils.testing import ignore_warnings
 from sklearn.exceptions import ConvergenceWarning
 
 
-@ignore_warnings(category=ConvergenceWarning)
-@ignore_warnings(category=PendingDeprecationWarning)
-def fisher_score(X, y, **kwargs):
+def fisher_score(X, y):
     """
     This function implements the fisher score feature selection, steps are as follows:
     1. Construct the affinity matrix W in fisher score way
@@ -21,9 +19,6 @@ def fisher_score(X, y, **kwargs):
         input data
     y: {numpy array}, shape (n_samples,)
         input class labels
-    kwargs: {dictionary}
-        n_selected_features: {int}
-            the maximum number of selected features returned, the default is the number of input features
 
     Output
     ------
@@ -35,9 +30,6 @@ def fisher_score(X, y, **kwargs):
     He, Xiaofei et al. "Laplacian Score for Feature Selection." NIPS 2005.
     Duda, Richard et al. "Pattern classification." John Wiley & Sons, 2012.
     """
-
-    n_samples, n_features = X.shape
-    n_selected_features = kwargs.get('n_selected_features', n_features)
 
     # Construct weight matrix W in a fisherScore way
     W = construct_W(X, neighbor_mode='supervised', fisher_score=True, y=y)
@@ -60,13 +52,4 @@ def fisher_score(X, y, **kwargs):
 
     # compute fisher score from laplacian score, where fisher_score = 1/lap_score - 1
     score = np.transpose(1.0/lap_score - 1)
-    return feature_ranking(score, n_selected_features)
-
-
-def feature_ranking(score, n_selected_features):
-    """
-    Rank features in descending order according to fisher score, the larger the fisher score, the more important the
-    feature is
-    """
-    idx = np.argsort(score, 0)
-    return idx[::-1][:n_selected_features]
+    return score

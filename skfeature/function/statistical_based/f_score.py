@@ -1,4 +1,3 @@
-import numpy as np
 from sklearn.feature_selection import f_classif
 
 
@@ -20,13 +19,4 @@ def f_score(X, y):
         f-score for each feature
     """
 
-    F, pval = f_classif(X, y)
-    return F
-
-
-def feature_ranking(F):
-    """
-    Rank features in descending order according to f-score, the higher the f-score, the more important the feature is
-    """
-    idx = np.argsort(F)
-    return idx[::-1]
+    return f_classif(X, y)

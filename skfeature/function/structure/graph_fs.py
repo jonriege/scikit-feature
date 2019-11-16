@@ -19,7 +19,7 @@ def calculate_obj(X, y, w, lambda1, lambda2, T):
 
 
 def graph_fs(X, y, **kwargs):
-    """
+    r"""
     This function implement the graph structural feature selection algorithm GOSCAR
 
     Objective Function

@@ -1,55 +1,40 @@
 import numpy as np
 from sklearn.model_selection import cross_val_score
-from sklearn.preprocessing import normalize
+from sklearn.naive_bayes import GaussianNB
 
 
-class ForwardSelection:
+def forward_selection(X, y, estimator=None, n_features=None, threshold=0.0):
 
-    def __init__(self, estimator):
-        self.estimator = estimator
-        self.scores = None
+    if estimator is None:
+        estimator = GaussianNB()
 
-    def fit_transform(self, X, y, n_features=None, threshold=0.0):
-        self.fit(X, y, n_features, threshold)
-        return self.transform(X, n_features, threshold)
-
-    def transform(self, X, n_features=None, threshold=0.0):
-        sorted_indices_rev = np.argsort(self.scores)
-        sorted_indices = np.flip(sorted_indices_rev)
-        filtered_indices = [i for i in sorted_indices if self.scores[i] > threshold]
-        if n_features is not None:
-            filtered_indices = filtered_indices[:n_features]
-        return X[:, filtered_indices]
-
-    def fit(self, X, y, n_features=None, threshold=0.0):
-        x_features = X.shape[1]
-        scores = np.zeros(x_features, dtype=float)
-        n = 1
-        n_features = n_features if n_features else x_features
+    x_features = X.shape[1]
+    scores = np.zeros(x_features, dtype=float)
+    n = 1
+    n_features = n_features if n_features else x_features
+    curr_score = 0.0
+    selected_features = []
+    while n <= n_features:
+        last_score = curr_score
         curr_score = 0.0
-        selected_features = []
-        while n <= n_features:
-            last_score = curr_score
-            curr_score = 0.0
-            feature = None
-            for f in range(x_features):
-                if f in selected_features:
-                    continue
-                selected_features.append(f)
-                selected_X = X[:, selected_features]
-                score = cross_val_score(self.estimator, selected_X, y, cv=3, n_jobs=-1).mean()
-                selected_features.pop()
-                if score > curr_score:
-                    curr_score = score
-                    feature = f
+        feature = None
+        for f in range(x_features):
+            if f in selected_features:
+                continue
+            selected_features.append(f)
+            selected_X = X[:, selected_features]
+            score = cross_val_score(estimator, selected_X, y, cv=3, n_jobs=-1).mean()
+            selected_features.pop()
+            if score > curr_score:
+                curr_score = score
+                feature = f
 
-            score_change = curr_score - last_score
-            if score_change <= threshold:
-                break
+        score_change = curr_score - last_score
+        if score_change <= threshold:
+            break
 
-            selected_features.append(feature)
-            scores[feature] = score_change
-            n += 1
+        selected_features.append(feature)
+        scores[feature] = score_change
+        n += 1
 
-        normalized_scores = normalize([scores], norm='l1')[0]
-        self.scores = normalized_scores
+    return scores

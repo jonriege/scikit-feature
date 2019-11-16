@@ -66,6 +66,7 @@ def cfs(X, y, **kwargs):
     F = []
     # M stores the merit values
     M = []
+    scores = np.zeros(n_features, dtype=float)
     while len(F) < n_selected_features:
         merit = -np.inf
         idx = -1
@@ -80,8 +81,9 @@ def cfs(X, y, **kwargs):
                 F.pop()
         F.append(idx)
         M.append(merit)
+        scores[idx] = merit
         if len(M) > 5:
             if all(M[i] <= M[i-1] for i in range(-1, -5, -1)):
                 break
-    return np.array(F)
+    return scores
 

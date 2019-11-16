@@ -4,7 +4,7 @@ from skfeature.utility.sparse_learning import tree_lasso_projection, tree_norm
 
 
 def tree_fs(X, y, z, idx, **kwargs):
-    """
+    r"""
     This function implements tree structured group lasso regularization with least square loss, i.e.,
     min_{w} ||Xw-Y||_2^2 + z\sum_{i}\sum_{j} h_{j}^{i}|||w_{G_{j}^{i}}|| where h_{j}^{i} is the weight for the j-th group
     from the i-th level (the root node is in level 0)

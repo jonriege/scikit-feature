@@ -3,7 +3,7 @@ from scipy.sparse import *
 from skfeature.utility.construct_W import construct_W
 
 
-def lap_score(X, **kwargs):
+def lap_score(X, y, **kwargs):
     """
     This function implements the laplacian score feature selection, steps are as follows:
     1. Construct the affinity matrix W if it is not specified
@@ -32,8 +32,9 @@ def lap_score(X, **kwargs):
     # if 'W' is not specified, use the default W
     if 'W' not in kwargs.keys():
         W = construct_W(X)
-    # construct the affinity matrix W
-    W = kwargs['W']
+    else:
+        W = kwargs['W']
+
     # build the diagonal D matrix from affinity matrix W
     D = np.array(W.sum(axis=1))
     L = W
@@ -51,7 +52,8 @@ def lap_score(X, **kwargs):
 
     # compute laplacian score for all features
     score = 1 - np.array(np.multiply(L_prime, 1/D_prime))[0, :]
-    return np.transpose(score)
+    score_inv = 1.0 / score
+    return np.transpose(score_inv)
 
 
 def feature_ranking(score):

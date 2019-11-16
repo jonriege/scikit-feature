@@ -61,17 +61,8 @@ def gini_index(X, y):
 
             if value < gini[i]:
                 gini[i] = value
-    return gini
-
-
-def feature_ranking(W):
-    """
-    Rank features in descending order according to their gini index values, the smaller the gini index,
-    the more important the feature is
-    """
-    idx = np.argsort(W)
-    return idx
-
+    gini_inv = 1.0 / gini
+    return gini_inv
 
 
 

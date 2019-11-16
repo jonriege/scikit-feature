@@ -2,7 +2,7 @@ import numpy as np
 from sklearn import linear_model
 
 
-def alpha_investing(X, y, w0, dw):
+def alpha_investing(X, y, **kwargs):
     """
     This function implements streamwise feature selection (SFS) algorithm alpha_investing for binary regression or
     univariate regression
@@ -13,6 +13,9 @@ def alpha_investing(X, y, w0, dw):
         input data, assume feature arrives one at each time step
     y: {numpy array}, shape (n_samples,)
         input class labels or regression target
+    kwargs: {dictionary}
+            w0: {float}
+            dw: {float}
 
     Output
     ------
@@ -24,9 +27,14 @@ def alpha_investing(X, y, w0, dw):
     Zhou, Jing et al. "Streaming Feature Selection using Alpha-investing." KDD 2006.
     """
 
+    w0 = kwargs.get('w0', 0.05)
+    dw = kwargs.get('dw', 0.05)
+
     n_samples, n_features = X.shape
     w = w0
     F = []  # selected features
+    scores = np.zeros(n_features, dtype=float)
+    pvalues = np.zeros(n_features, dtype=float)
     for i in range(n_features):
         x_can = X[:, i]  # generate next feature
         alpha = w/2/(i+1)
@@ -36,7 +44,7 @@ def alpha_investing(X, y, w0, dw):
             linreg_old = linear_model.LinearRegression()
             linreg_old.fit(X_old, y)
             error_old = 1 - linreg_old.score(X_old, y)
-        if i is not 0:
+        else:
             # model built with only X_old
             linreg_old = linear_model.LinearRegression()
             linreg_old.fit(X_old, y)
@@ -49,11 +57,14 @@ def alpha_investing(X, y, w0, dw):
         error_new = 1 - logreg_new.score(X_new, y)
 
         # calculate p-value
+        score = error_old - error_new
         pval = np.exp((error_new - error_old)/(2*error_old/n_samples))
+        scores[i] = score
+        pvalues[i] = pval
         if pval < alpha:
             F.append(i)
             w = w + dw - alpha
         else:
             w -= alpha
-    return np.array(F)
+    return scores, pvalues
 

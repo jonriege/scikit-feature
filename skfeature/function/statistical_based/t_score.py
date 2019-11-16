@@ -43,12 +43,3 @@ def t_score(X, y):
         print('y should be guaranteed to a binary class vector')
         exit(0)
     return np.abs(F)
-
-
-def feature_ranking(F):
-    """
-    Rank features in descending order according to t-score, the higher the t-score, the more important the feature is
-    """
-    idx = np.argsort(F)
-    return idx[::-1]
-
