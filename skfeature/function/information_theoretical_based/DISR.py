@@ -33,6 +33,7 @@ def disr(X, y, **kwargs):
     """
 
     n_samples, n_features = X.shape
+    scores = np.zeros(n_features, dtype=float)
     # index of selected features, initialized to be empty
     F = []
     # Objective function value for selected features
@@ -62,6 +63,7 @@ def disr(X, y, **kwargs):
             # select the feature whose mutual information is the largest
             idx = np.argmax(t1)
             F.append(idx)
+            scores[idx] = t1[idx]
             J_DISR.append(t1[idx])
             MIfy.append(t1[idx])
             f_select = X[:, idx]
@@ -86,9 +88,10 @@ def disr(X, y, **kwargs):
                     j_disr = sum[i]
                     idx = i
         F.append(idx)
+        scores[idx] = j_disr
         J_DISR.append(j_disr)
         MIfy.append(t1[idx])
         f_select = X[:, idx]
 
-    return np.array(F), np.array(J_DISR), np.array(MIfy)
+    return scores  # ,np.array(F), np.array(J_DISR), np.array(MIfy)
 

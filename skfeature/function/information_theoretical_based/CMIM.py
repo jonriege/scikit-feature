@@ -31,6 +31,7 @@ def cmim(X, y, **kwargs):
     """
 
     n_samples, n_features = X.shape
+    scores = np.zeros(n_features, dtype=float)
     # index of selected features, initialized to be empty
     F = []
     # Objective function value for selected features
@@ -62,6 +63,7 @@ def cmim(X, y, **kwargs):
             # select the feature whose mutual information is the largest
             idx = np.argmax(t1)
             F.append(idx)
+            scores[idx] = t1[idx]
             J_CMIM.append(t1[idx])
             MIfy.append(t1[idx])
             f_select = X[:, idx]
@@ -89,8 +91,9 @@ def cmim(X, y, **kwargs):
                     j_cmim = t
                     idx = i
         F.append(idx)
+        scores[idx] = j_cmim
         J_CMIM.append(j_cmim)
         MIfy.append(t1[idx])
         f_select = X[:, idx]
 
-    return np.array(F), np.array(J_CMIM), np.array(MIfy)
+    return scores  # , np.array(F), np.array(J_CMIM), np.array(MIfy)
