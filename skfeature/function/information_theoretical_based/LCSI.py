@@ -1,4 +1,5 @@
 from skfeature.utility.entropy_estimators import *
+import numpy as np
 
 
 def lcsi(X, y, **kwargs):
@@ -38,6 +39,8 @@ def lcsi(X, y, **kwargs):
     """
 
     n_samples, n_features = X.shape
+
+    scores = np.zeros(n_features, dtype=float)
     # index of selected features, initialized to be empty
     F = []
     # Objective function value for selected features
@@ -75,6 +78,7 @@ def lcsi(X, y, **kwargs):
             idx = np.argmax(t1)
             F.append(idx)
             J_CMI.append(t1[idx])
+            scores[idx] = t1[idx]
             MIfy.append(t1[idx])
             f_select = X[:, idx]
 
@@ -105,11 +109,12 @@ def lcsi(X, y, **kwargs):
                     j_cmi = t
                     idx = i
         F.append(idx)
+        scores[idx] = j_cmi
         J_CMI.append(j_cmi)
         MIfy.append(t1[idx])
         f_select = X[:, idx]
 
-    return np.array(F), np.array(J_CMI), np.array(MIfy)
+    return scores  # np.array(F), np.array(J_CMI), np.array(MIfy)
 
 
 
