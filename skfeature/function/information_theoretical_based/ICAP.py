@@ -26,6 +26,7 @@ def icap(X, y, **kwargs):
         corresponding mutual information between selected features and response
     """
     n_samples, n_features = X.shape
+    scores = np.zeros(n_features, dtype=float)
     # index of selected features, initialized to be empty
     F = []
     # Objective function value for selected features
@@ -54,6 +55,7 @@ def icap(X, y, **kwargs):
             # select the feature whose mutual information is the largest
             idx = np.argmax(t1)
             F.append(idx)
+            scores[idx] = t1[idx]
             J_ICAP.append(t1[idx])
             MIfy.append(t1[idx])
             f_select = X[:, idx]
@@ -81,8 +83,9 @@ def icap(X, y, **kwargs):
                     j_icap = t
                     idx = i
         F.append(idx)
+        scores[idx] = j_icap
         J_ICAP.append(j_icap)
         MIfy.append(t1[idx])
         f_select = X[:, idx]
 
-    return np.array(F), np.array(J_ICAP), np.array(MIfy)
+    return scores  # ,np.array(F), np.array(J_ICAP), np.array(MIfy)

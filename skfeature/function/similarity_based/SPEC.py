@@ -5,7 +5,7 @@ from sklearn.metrics.pairwise import rbf_kernel
 from numpy import linalg as LA
 
 
-def spec(X, **kwargs):
+def spec(X, y, **kwargs):
     """
     This function implements the SPEC feature selection
 

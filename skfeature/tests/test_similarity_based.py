@@ -2,7 +2,7 @@ import unittest
 from sklearn.datasets import load_digits
 from sklearn.utils import check_X_y
 from sklearn.feature_selection import SelectKBest
-from skfeature.function.similarity_based import fisher_score, lap_score, reliefF, trace_ratio
+from skfeature.function.similarity_based import fisher_score, lap_score, reliefF, trace_ratio, SPEC
 
 
 class TestSimilarityBased(unittest.TestCase):
@@ -25,6 +25,11 @@ class TestSimilarityBased(unittest.TestCase):
     def test_trace_ratio(self):
         X, y = load_digits(return_X_y=True, n_class=3)
         X_filtered = SelectKBest(trace_ratio.trace_ratio, k=10).fit_transform(X, y)
+        check_X_y(X_filtered, y)
+
+    def test_SPEC(self):
+        X, y = load_digits(return_X_y=True, n_class=3)
+        X_filtered = SelectKBest(SPEC.spec, k=10).fit_transform(X, y)
         check_X_y(X_filtered, y)
 
 

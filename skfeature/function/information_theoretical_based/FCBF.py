@@ -31,6 +31,7 @@ def fcbf(X, y, **kwargs):
     """
 
     n_samples, n_features = X.shape
+    scores = np.zeros(n_features)
     if 'delta' in kwargs.keys():
         delta = kwargs['delta']
     else:
@@ -57,6 +58,7 @@ def fcbf(X, y, **kwargs):
         np.delete(s_list, idx, 0)
         F.append(s_list[idx, 0])
         SU.append(s_list[idx, 1])
+        scores[s_list[idx, 0]] = s_list[idx, 1]
         for i in s_list[:, 0]:
             fi = X[:, i]
             if su_calculation(fp, fi) >= t1[i, 1]:
@@ -68,4 +70,4 @@ def fcbf(X, y, **kwargs):
                 s_list = s_list[idx]
                 length = len(s_list)//2
                 s_list = s_list.reshape((length, 2))
-    return np.array(F, dtype=int)
+    return scores  # ,np.array(F, dtype=int)
