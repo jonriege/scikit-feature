@@ -5,7 +5,7 @@ import sklearn.cluster
 from skfeature.utility.construct_W import construct_W
 
 
-def ndfs(X, **kwargs):
+def ndfs(X, y, **kwargs):
     """
     This function implement unsupervised feature selection using nonnegative spectral analysis, i.e.,
     min_{F,W} Tr(F^T L F) + alpha*(||XW-F||_F^2 + beta*||W||_{2,1}) + gamma/2 * ||F^T F - I||_F^2
@@ -60,7 +60,10 @@ def ndfs(X, **kwargs):
         beta = kwargs['beta']
     if 'F0' not in kwargs:
         if 'n_clusters' not in kwargs:
-            print >>sys.stderr, "either F0 or n_clusters should be provided"
+            # print >>sys.stderr, "either F0 or n_clusters should be provided"
+            print("either F0 or n_clusters should be provided", file=sys.stderr)
+            n_clusters = 5
+            F = kmeans_initialization(X, n_clusters)
         else:
             # initialize F
             n_clusters = kwargs['n_clusters']
@@ -109,7 +112,8 @@ def ndfs(X, **kwargs):
 
         if iter_step >= 1 and math.fabs(obj[iter_step] - obj[iter_step-1]) < 1e-3:
             break
-    return W
+    scores = feature_ranking(W)
+    return scores  # W
 
 
 def kmeans_initialization(X, n_clusters):
@@ -154,3 +158,13 @@ def calculate_obj(X, W, F, L, alpha, beta):
     T3 = (np.sqrt((W*W).sum(1))).sum()
     obj = T1 + alpha*(T2 + beta*T3)
     return obj
+
+
+def feature_ranking(W):
+    """
+    This function computes MCFS score and ranking features according to feature weights matrix W
+    """
+    mcfs_score = W.max(1)
+    idx = np.argsort(mcfs_score, 0)
+    idx = idx[::-1]
+    return idx

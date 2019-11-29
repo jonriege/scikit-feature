@@ -5,7 +5,7 @@ from skfeature.utility.sparse_learning import generate_diagonal_matrix, calculat
 from sklearn.metrics.pairwise import pairwise_distances
 
 
-def udfs(X, **kwargs):
+def udfs(X, y, **kwargs):
     """
     This function implements l2,1-norm regularized discriminative feature
     selection for unsupervised learning, i.e., min_W Tr(W^T M W) + gamma ||W||_{2,1}, s.t. W^T W = I
@@ -74,7 +74,7 @@ def udfs(X, **kwargs):
 
         if iter_step >= 1 and math.fabs(obj[iter_step] - obj[iter_step-1]) < 1e-3:
             break
-    return W
+    return feature_ranking(W)
 
 
 def construct_M(X, k, gamma):
@@ -108,3 +108,13 @@ def calculate_obj(X, W, M, gamma):
     This function calculates the objective function of ls_l21 described in the paper
     """
     return np.trace(np.dot(np.dot(W.T, M), W)) + gamma*calculate_l21_norm(W)
+
+
+def feature_ranking(W):
+    """
+    This function computes MCFS score and ranking features according to feature weights matrix W
+    """
+    mcfs_score = W.max(1)
+    idx = np.argsort(mcfs_score, 0)
+    idx = idx[::-1]
+    return idx
