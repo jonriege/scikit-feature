@@ -43,7 +43,7 @@ def proximal_gradient_descent(X, y, **kwargs):
 
     z = kwargs.get('k', 0.1)
 
-    Y = OneHotEncoder(sparse=False).fit_transform(y.reshape(-1, 1))
+    Y = OneHotEncoder(sparse=False, categories='auto').fit_transform(y.reshape(-1, 1))
 
     # starting point initialization
     n_samples, n_features = X.shape
