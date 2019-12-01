@@ -64,15 +64,4 @@ def mcfs(X, y, **kwargs):
         clf = linear_model.Lars(n_nonzero_coefs=n_selected_features)
         clf.fit(X, Y[:, i])
         W[:, i] = clf.coef_
-    scores = feature_ranking(W)
-    return scores  # W
-
-
-def feature_ranking(W):
-    """
-    This function computes MCFS score and ranking features according to feature weights matrix W
-    """
-    mcfs_score = W.max(1)
-    idx = np.argsort(mcfs_score, 0)
-    idx = idx[::-1]
-    return idx
+    return W.max(1)

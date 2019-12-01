@@ -112,8 +112,7 @@ def ndfs(X, y, **kwargs):
 
         if iter_step >= 1 and math.fabs(obj[iter_step] - obj[iter_step-1]) < 1e-3:
             break
-    scores = feature_ranking(W)
-    return scores  # W
+    return W.max(1)
 
 
 def kmeans_initialization(X, n_clusters):
@@ -158,13 +157,3 @@ def calculate_obj(X, W, F, L, alpha, beta):
     T3 = (np.sqrt((W*W).sum(1))).sum()
     obj = T1 + alpha*(T2 + beta*T3)
     return obj
-
-
-def feature_ranking(W):
-    """
-    This function computes MCFS score and ranking features according to feature weights matrix W
-    """
-    mcfs_score = W.max(1)
-    idx = np.argsort(mcfs_score, 0)
-    idx = idx[::-1]
-    return idx
