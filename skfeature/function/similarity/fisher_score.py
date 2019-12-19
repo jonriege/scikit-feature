@@ -1,8 +1,6 @@
 import numpy as np
 from scipy.sparse import *
 from skfeature.utility.construct_W import construct_W
-from sklearn.utils.testing import ignore_warnings
-from sklearn.exceptions import ConvergenceWarning
 
 
 def fisher_score(X, y):

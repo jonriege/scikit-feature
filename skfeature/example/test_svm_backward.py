@@ -4,13 +4,10 @@ from sklearn.model_selection import KFold
 from skfeature.function.wrapper import svm_backward
 from sklearn import svm
 from sklearn.metrics import accuracy_score
-from sklearn.utils.testing import ignore_warnings
-from sklearn.exceptions import ConvergenceWarning
 
 
 class TestSVMBackward(TestCase):
 
-    @ignore_warnings(category=ConvergenceWarning)
     def test_svm_backward(self):
         # load data
         mat = scipy.io.loadmat('../data/COIL20.mat')

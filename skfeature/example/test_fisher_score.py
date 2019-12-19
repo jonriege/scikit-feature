@@ -4,13 +4,10 @@ from sklearn.model_selection import KFold
 from sklearn import svm
 from sklearn.metrics import accuracy_score
 from skfeature.function.similarity import fisher_score
-from sklearn.utils.testing import ignore_warnings
-from sklearn.exceptions import ConvergenceWarning
 
 
 class TestFisherScore(TestCase):
 
-    @ignore_warnings(category=ConvergenceWarning)
     def test_fisher_score(self):
         # load data
         mat = scipy.io.loadmat('../data/COIL20.mat')

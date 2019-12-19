@@ -1,6 +1,6 @@
 import unittest
 from sklearn.datasets import load_digits
-from sklearn.utils import check_X_y, check_array
+from sklearn.utils import check_X_y
 from sklearn.feature_selection import SelectKBest
 from skfeature.function.sparse_learning import ll_l21, ls_l21, MCFS, NDFS, RFS, UDFS
 
