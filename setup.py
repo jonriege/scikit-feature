@@ -25,6 +25,5 @@ setup(
     url=URL,
     packages=['skfeature', 'skfeature.utility', 'skfeature.function', 'skfeature.function.information_theory',
               'skfeature.function.similarity', 'skfeature.function.sparse_learning', 'skfeature.function.statistical',
-              'skfeature.function.streaming', 'skfeature.function.structure', 'skfeature.function.wrapper',
-              'skfeature.function.random_forest'],
+              'skfeature.function.wrapper', 'skfeature.function.random_forest'],
 )
