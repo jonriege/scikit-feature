@@ -3,7 +3,7 @@ from unittest import TestCase, main
 from sklearn.model_selection import KFold
 from sklearn import svm
 from sklearn.metrics import accuracy_score
-from skfeature.function.similarity_based import fisher_score
+from skfeature.function.similarity import fisher_score
 from sklearn.utils.testing import ignore_warnings
 from sklearn.exceptions import ConvergenceWarning
 

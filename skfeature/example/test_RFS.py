@@ -3,7 +3,7 @@ from unittest import TestCase, main
 from sklearn import svm
 from sklearn.model_selection import KFold
 from sklearn.metrics import accuracy_score
-from skfeature.function.sparse_learning_based import RFS
+from skfeature.function.sparse_learning import RFS
 from skfeature.utility.sparse_learning import construct_label_matrix, feature_ranking
 
 

@@ -2,10 +2,10 @@ import unittest
 from sklearn.datasets import load_digits, load_iris
 from sklearn.utils import check_X_y
 from sklearn.feature_selection import SelectKBest
-from skfeature.function.information_theoretical_based import MRMR, JMI, CIFE, CMIM, DISR, FCBF, ICAP, MIFS, MIM
+from skfeature.function.information_theory import MRMR, JMI, CIFE, CMIM, DISR, FCBF, ICAP, MIFS, MIM
 
 
-class MyTestCase(unittest.TestCase):
+class TestInformationTheory(unittest.TestCase):
 
     def test_MRMR(self):
         X, y = load_digits(return_X_y=True, n_class=2)

@@ -1,7 +1,7 @@
 import scipy.io
 from sklearn import svm
 from sklearn.metrics import accuracy_score
-from skfeature.function.statistical_based import gini_index
+from skfeature.function.statistical import gini_index
 from sklearn import cross_validation
 
 

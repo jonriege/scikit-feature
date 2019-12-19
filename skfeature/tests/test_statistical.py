@@ -2,10 +2,10 @@ import unittest
 from sklearn.datasets import load_digits, load_iris
 from sklearn.utils import check_X_y
 from sklearn.feature_selection import SelectKBest
-from skfeature.function.statistical_based import CFS, chi_square, f_score, gini_index, t_score
+from skfeature.function.statistical import CFS, chi_square, f_score, gini_index, t_score
 
 
-class TestStatisticalBased(unittest.TestCase):
+class TestStatistical(unittest.TestCase):
 
     def test_CFS(self):
         X, y = load_iris(return_X_y=True)

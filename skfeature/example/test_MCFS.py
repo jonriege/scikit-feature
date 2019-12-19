@@ -1,5 +1,5 @@
 import scipy.io
-from skfeature.function.sparse_learning_based import MCFS
+from skfeature.function.sparse_learning import MCFS
 from skfeature.utility import construct_W
 from skfeature.utility import unsupervised_evaluation
 

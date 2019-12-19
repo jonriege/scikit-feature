@@ -2,7 +2,7 @@ import scipy.io
 from sklearn.metrics import accuracy_score
 from sklearn import cross_validation
 from sklearn import svm
-from skfeature.function.statistical_based import f_score
+from skfeature.function.statistical import f_score
 
 
 def main():

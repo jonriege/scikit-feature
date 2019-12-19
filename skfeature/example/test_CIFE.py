@@ -2,7 +2,7 @@ import scipy.io
 from sklearn.metrics import accuracy_score
 from sklearn import cross_validation
 from sklearn import svm
-from skfeature.function.information_theoretical_based import CIFE
+from skfeature.function.information_theory import CIFE
 
 
 def main():

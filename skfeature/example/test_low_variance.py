@@ -1,5 +1,5 @@
 import scipy.io
-from skfeature.function.statistical_based import low_variance
+from skfeature.function.statistical import low_variance
 from skfeature.utility import unsupervised_evaluation
 
 

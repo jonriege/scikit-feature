@@ -3,7 +3,7 @@ from unittest import TestCase, main
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import KFold
 from sklearn import svm
-from skfeature.function.information_theoretical_based import FCBF
+from skfeature.function.information_theory import FCBF
 
 
 class TestFCBF(TestCase):

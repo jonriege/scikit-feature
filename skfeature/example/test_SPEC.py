@@ -1,5 +1,5 @@
 import scipy.io
-from skfeature.function.similarity_based import SPEC
+from skfeature.function.similarity import SPEC
 from skfeature.utility import unsupervised_evaluation
 
 

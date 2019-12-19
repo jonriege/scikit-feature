@@ -2,10 +2,10 @@ import unittest
 from sklearn.datasets import load_digits
 from sklearn.utils import check_X_y, check_array
 from sklearn.feature_selection import SelectKBest
-from skfeature.function.sparse_learning_based import ll_l21, ls_l21, MCFS, NDFS, RFS, UDFS
+from skfeature.function.sparse_learning import ll_l21, ls_l21, MCFS, NDFS, RFS, UDFS
 
 
-class TestSparseLearningBased(unittest.TestCase):
+class TestSparseLearning(unittest.TestCase):
 
     def test_ll_l21_proximal_gradient_descent(self):
         X, y = load_digits(return_X_y=True, n_class=2)

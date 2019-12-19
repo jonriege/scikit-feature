@@ -1,9 +1,9 @@
-from skfeature.function.information_theoretical_based import LCSI
+from skfeature.function.information_theory import LCSI
 
 
-def mifs(X, y, **kwargs):
+def jmi(X, y, **kwargs):
     """
-    This function implements the MIFS feature selection
+    This function implements the JMI feature selection
 
     Input
     -----
@@ -28,16 +28,11 @@ def mifs(X, y, **kwargs):
     ---------
     Brown, Gavin et al. "Conditional Likelihood Maximisation: A Unifying Framework for Information Theoretic Feature Selection." JMLR 2012.
     """
-
-    if 'beta' not in kwargs.keys():
-        beta = 0.5
-    else:
-        beta = kwargs['beta']
     if 'n_selected_features' in kwargs.keys():
         n_selected_features = kwargs['n_selected_features']
-        # F, J_CMI, MIfy = LCSI.lcsi(X, y, beta=beta, gamma=0, n_selected_features=n_selected_features)
-        F = LCSI.lcsi(X, y, beta=beta, gamma=0, n_selected_features=n_selected_features)
+        # F, J_CMI, MIfy = LCSI.lcsi(X, y, function_name='JMI', n_selected_features=n_selected_features)
+        F = LCSI.lcsi(X, y, function_name='JMI', n_selected_features=n_selected_features)
     else:
-        # F, J_CMI, MIfy = LCSI.lcsi(X, y, beta=beta, gamma=0)
-        F = LCSI.lcsi(X, y, beta=beta, gamma=0)
+        # F, J_CMI, MIfy = LCSI.lcsi(X, y, function_name='JMI')
+        F = LCSI.lcsi(X, y, function_name='JMI')
     return F  # , J_CMI, MIfy

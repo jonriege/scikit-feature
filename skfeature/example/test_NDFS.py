@@ -1,5 +1,5 @@
 import scipy.io
-from skfeature.function.sparse_learning_based import NDFS
+from skfeature.function.sparse_learning import NDFS
 from skfeature.utility import construct_W
 from skfeature.utility.sparse_learning import feature_ranking
 from skfeature.utility import unsupervised_evaluation

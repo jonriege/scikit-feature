@@ -3,7 +3,7 @@ from sklearn import svm
 from sklearn import cross_validation
 from sklearn.metrics import accuracy_score
 from skfeature.utility.sparse_learning import *
-from skfeature.function.sparse_learning_based import ll_l21
+from skfeature.function.sparse_learning import ll_l21
 
 
 def main():

@@ -3,7 +3,7 @@ from unittest import TestCase, main
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import KFold
 from sklearn import svm
-from skfeature.function.statistical_based import chi_square
+from skfeature.function.statistical import chi_square
 
 
 class TestChiSquare(TestCase):

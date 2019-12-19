@@ -1,5 +1,5 @@
 import scipy.io
-from skfeature.function.similarity_based import lap_score
+from skfeature.function.similarity import lap_score
 from skfeature.utility import construct_W
 from skfeature.utility import unsupervised_evaluation
 

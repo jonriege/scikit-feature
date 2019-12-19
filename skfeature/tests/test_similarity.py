@@ -2,10 +2,10 @@ import unittest
 from sklearn.datasets import load_digits
 from sklearn.utils import check_X_y
 from sklearn.feature_selection import SelectKBest
-from skfeature.function.similarity_based import fisher_score, lap_score, reliefF, trace_ratio, SPEC
+from skfeature.function.similarity import fisher_score, lap_score, reliefF, trace_ratio, SPEC
 
 
-class TestSimilarityBased(unittest.TestCase):
+class TestSimilarity(unittest.TestCase):
 
     def test_fisher_score(self):
         X, y = load_digits(return_X_y=True, n_class=2)

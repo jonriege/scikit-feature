@@ -3,7 +3,7 @@ from unittest import TestCase, main
 from sklearn.model_selection import KFold
 from sklearn import svm
 from sklearn.metrics import accuracy_score
-from skfeature.function.similarity_based import reliefF
+from skfeature.function.similarity import reliefF
 
 
 class TestReliefF(TestCase):

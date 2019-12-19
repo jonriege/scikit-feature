@@ -3,7 +3,7 @@ from unittest import TestCase, main
 from sklearn import svm
 from sklearn.model_selection import KFold
 from sklearn.metrics import accuracy_score
-from skfeature.function.statistical_based import CFS
+from skfeature.function.statistical import CFS
 
 
 class TestCFS(TestCase):
